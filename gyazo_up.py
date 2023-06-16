@@ -13,7 +13,7 @@ desktop_dir = os.path.expanduser('~/Desktop')
 class Screenshot():
 
     def __init__(self):
-        self.flg = False
+        self.screenshot_completion = False
 
     def on_created(self):
 
@@ -32,29 +32,22 @@ class Screenshot():
         ACCESS_TOKEN = os.getenv("gyazo_api")
         URL="https://upload.gyazo.com/api/upload"  
 
-        # 1.アクセストークンを含んだヘッダー情報を作成
         headers = {'Authorization': "Bearer {}".format(ACCESS_TOKEN)}  
 
-        # 2.アップロードする画像をロード
         with open(filepath, "rb") as f:  
-            # 3.画像のバイナリをキー（imagedata）にセット  
             files = {'imagedata':f.read()}  
 
-            # 通信開始  
             response = requests.request('post', URL, headers=headers, files=files)  
 
-            # HTTPステータスコードを取得  
             if response.status_code == 200:
                 print("アップロード完了")
 
             textfilepath = desktop_dir + "\\url.txt"
-            # テキストファイルを作成し、URLを書き込む
             with open(textfilepath, "w") as f:
                 f.write(response.json().get("url"))
 
-            # Notepadでテキストファイルを開く
             subprocess.run(["notepad.exe", textfilepath])
-            self.flg = True
+            self.screenshot_completion = True
 
 
 if __name__ == "__main__":
@@ -63,5 +56,5 @@ if __name__ == "__main__":
     while True:
         sch.on_created()
         time.sleep(1)
-        if sch.flg:
+        if sch.screenshot_completion:
             break
